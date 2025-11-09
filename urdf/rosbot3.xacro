@@ -3,7 +3,7 @@
 <!--
   Description of the ROSbot3 robot.
 
-  Author: Helio Perroni Filho
+  Author: Breno Uliana de Angelo
 -->
 
 <robot name="rosbot3" xmlns:xacro="http://www.ros.org/wiki/xacro">
@@ -29,6 +29,7 @@
   <!-- Wheel width is not provided in the manual https://husarion.com/manuals/rosbot -->
   <!-- Picking a random but reasonable value -->
   <xacro:property name="wheel_width" value="${30.0 * M}"/> <!-- Not provided in the manual -->
+  <xacro:property name="wheel_axle_z_offset" value="${wheel_diameter * 0.5 - 0.5 * chassis_height - ground_clearance}"/>
 
   <!-- Dimensions of the robot main body -->
   <xacro:property name="chassis_length" value="${200.0 * M}"/>
@@ -52,6 +53,7 @@
   <xacro:property name="lidar_displacement_x" value="${0.0 * M}"/> <!-- Not provided in the manual -->
   <xacro:property name="lidar_displacement_z" value="${overall_height_with_lidar - overall_height - lidar_height * 0.5 }"/>
 
+  <!-- Chassis -->
   <link name="base_link"/>
   <xacro:joint_fixed
     parent="base_link"
@@ -73,6 +75,69 @@
     z="${0.5 * chassis_height}"
   />
 
+
+  <!-- Wheels -->
+  <xacro:macro
+    name="wheels"
+    params="position"
+  >
+    <xacro:solid_cylinder
+      name="wheel_${position}_left"
+      length="${wheel_width}"
+      radius="${wheel_diameter * 0.5}"
+      roll="${90.0 * DEG}"
+    />
+
+    <xacro:solid_cylinder
+      name="wheel_${position}_right"
+      length="${wheel_width}"
+      radius="${wheel_diameter * 0.5}"
+      roll="${90.0 * DEG}"
+    />
+
+    <xacro:solid_cylinder
+      name="wheel_${position}_axle"
+      length="${chassis_width}"
+      radius="0.005"
+      roll="${90.0 * DEG}"
+    />
+
+    <xacro:joint_continuous
+      name="joint_wheel_${position}_left"
+      parent="wheel_${position}_axle"
+      child="wheel_${position}_left"
+      y="${(chassis_width + wheel_width) * 0.5}"
+      axis="0 1 0"
+    />
+
+    <xacro:joint_continuous
+      name="joint_wheel_${position}_right"
+      parent="wheel_${position}_axle"
+      child="wheel_${position}_right"
+      y="${(chassis_width + wheel_width) * -0.5}"
+      axis="0 1 0"
+    />
+  </xacro:macro>
+
+  <xacro:wheels position="front"/>
+  <xacro:wheels position="rear"/>
+
+  <xacro:joint_fixed
+    parent="chassis"
+    child="wheel_front_axle"
+    x="${0.5 * wheel_wheelbase}"
+    z="${wheel_axle_z_offset}"
+  />
+
+  <xacro:joint_fixed
+    parent="chassis"
+    child="wheel_rear_axle"
+    x="${-0.5 * wheel_wheelbase}"
+    z="${wheel_axle_z_offset}"
+  />
+
+
+  <!-- Camera -->
   <!-- <xacro:solid_block
     name="camera_support"
     size_x="${camera_width}"
@@ -88,6 +153,8 @@
     z="${camera_displacement_z}"
   />
 
+
+  <!-- LiDAR -->
   <xacro:solid_cylinder
     name="lidar"
     radius="${lidar_diameter * 0.5}"
