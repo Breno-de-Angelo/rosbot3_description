@@ -56,7 +56,7 @@
   <xacro:joint_fixed
     parent="base_link"
     child="chassis"
-    z="${ground_clearance + 0.5 * body_height}"
+    z="${ground_clearance + 0.5 * chassis_height}"
   />
 
   <xacro:solid_block
@@ -66,18 +66,19 @@
     size_z="${chassis_height}"
   />
 
+  <link name="payload_base"/>
   <xacro:joint_fixed
     parent="chassis"
     child="payload_base"
-    z="${0.5 * body_height}"
+    z="${0.5 * chassis_height}"
   />
 
-  <xacro:solid_block
+  <!-- <xacro:solid_block
     name="camera_support"
     size_x="${camera_width}"
     size_y="${camera_depth}"
     size_z="${camera_height}"
-  />
+  /> -->
 
   <xacro:camera_link name="camera_front"/>
   <xacro:joint_fixed
