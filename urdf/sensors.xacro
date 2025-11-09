@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Sensors description for the ROSbot3 robot (camera and LiDAR).
+
+  Author: Breno Uliana de Angelo
+-->
+
+<robot name="rosbot3_sensors" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Total height including the camera support -->
+  <xacro:property name="overall_height_with_camera_support" value="${197.0 * M}"/>
+
+  <!-- Total height including the LiDAR -->
+  <xacro:property name="overall_height_with_lidar" value="${141.0 * M}"/>
+
+  <!-- Dimensions of the camera itself -->
+  <xacro:property name="camera_height" value="${30.0 * M}"/> <!-- Not provided in the manual -->
+  <xacro:property name="camera_width" value="${80.0 * M}"/> <!-- Not provided in the manual -->
+  <xacro:property name="camera_depth" value="${15.0 * M}"/> <!-- Not provided in the manual -->
+
+  <!-- Camera position relative to the payload base -->
+  <xacro:property name="camera_displacement_x" value="${0.0 * M}"/> <!-- Not provided in the manual -->
+  <xacro:property name="camera_displacement_z" value="${overall_height_with_camera_support - overall_height - camera_height * 0.5 }"/>
+
+  <!-- Dimensions of the LiDAR itself -->
+  <xacro:property name="lidar_diameter" value="${80.0 * M}"/>
+  <xacro:property name="lidar_height" value="${overall_height_with_lidar - overall_height_with_camera_support}"/>
+
+  <!-- LiDAR position relative to the payload base -->
+  <xacro:property name="lidar_displacement_x" value="${0.0 * M}"/> <!-- Not provided in the manual -->
+  <xacro:property name="lidar_displacement_z" value="${overall_height_with_lidar - overall_height - lidar_height * 0.5 }"/>
+
+
+  <!-- Camera -->
+  <!-- <xacro:solid_block
+    name="camera_support"
+    size_x="${camera_width}"
+    size_y="${camera_depth}"
+    size_z="${camera_height}"
+  /> -->
+
+  <xacro:camera_link name="camera_front"/>
+  <xacro:joint_fixed
+    parent="payload_base"
+    child="camera_front"
+    x="${camera_displacement_x}"
+    z="${camera_displacement_z}"
+  />
+
+
+  <!-- LiDAR -->
+  <xacro:solid_cylinder
+    name="lidar"
+    radius="${lidar_diameter * 0.5}"
+    length="${lidar_height}"
+  />
+
+  <xacro:joint_fixed
+    parent="payload_base"
+    child="lidar"
+    x="${lidar_displacement_x}"
+    z="${lidar_displacement_z}"
+  />
+
+  <link name="laser"/>
+  <xacro:joint_fixed
+    parent="lidar"
+    child="laser"
+    z="${0.5 * lidar_height}"
+  />
+</robot>
+
