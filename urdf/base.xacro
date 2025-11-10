@@ -42,6 +42,7 @@
     size_z="${chassis_height}"
   />
 
+  <!-- Link on top and in the center of the chassis, used as reference for the sensors -->
   <link name="payload_base"/>
   <xacro:joint_fixed
     parent="chassis"
